@@ -1,9 +1,19 @@
+import impl.DivideOperation;
+import impl.MinusOperation;
+import impl.MultiplyOperation;
+import impl.PlusOperation;
+
 import java.awt.event.*;
 import javax.swing.*;
 import java.awt.*;
 
 public class Calculator implements ActionListener {
+
     private static JTextField inputBox;
+    private static DivideOperation divideOperation = new DivideOperation();
+    private static PlusOperation plusOperation = new PlusOperation();
+    private static MultiplyOperation multiplyOperation = new MultiplyOperation();
+    private static MinusOperation minusOperation = new MinusOperation();
 
     Calculator(){}
     public static void main(String[] args) {
@@ -89,31 +99,42 @@ public class Calculator implements ActionListener {
 
     public static String evaluate(String expression) {
         char[] arr = expression.toCharArray();
-        String operand1 = "";String operand2 = "";String operator = "";
+        StringBuilder operand1 = new StringBuilder();
+        StringBuilder operand2 = new StringBuilder();
+        StringBuilder operator = new StringBuilder();
         double result = 0;
 
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] >= '0' && arr[i] <= '9' || arr[i] == '.') {
-                if(operator.isEmpty()){
-                    operand1 += arr[i];
-                }else{
-                    operand2 += arr[i];
+        for (char c : arr) {
+            if (c >= '0' && c <= '9' || c == '.') {
+                if (operator.length() == 0) {
+                    operand1.append(c);
+                } else {
+                    operand2.append(c);
                 }
             }
 
-            if(arr[i] == '+' || arr[i] == '-' || arr[i] == '/' || arr[i] == '*') {
-                operator += arr[i];
+            if (c == '+' || c == '-' || c == '/' || c == 'x') {
+                operator.append(c);
             }
         }
 
-        if (operator.equals("+"))
-            result = (Double.parseDouble(operand1) + Double.parseDouble(operand2));
-        else if (operator.equals("-"))
-            result = (Double.parseDouble(operand1) - Double.parseDouble(operand2));
-        else if (operator.equals("/"))
-            result = (Double.parseDouble(operand1) / Double.parseDouble(operand2));
-        else
-            result = (Double.parseDouble(operand1) * Double.parseDouble(operand2));
-        return operand1 + operator + operand2 + "=" +result;
+        switch (operator.toString()) {
+        case "+":
+            result = plusOperation.add(operand1.toString(), operand2.toString());
+            break;
+        case "-":
+            result = minusOperation.subtract(operand1.toString(),
+                    operand2.toString());
+            break;
+        case "/":
+            result = divideOperation.divide(operand1.toString(),
+                    operand2.toString());
+            break;
+        case "x":
+            result = multiplyOperation.multiply(operand1.toString(),
+                    operand2.toString());
+            break;
+        }
+        return operand1 + operator.toString() + operand2 + "=" +result;
     }
 } 
